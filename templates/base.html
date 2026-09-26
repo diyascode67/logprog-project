@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}Smart Retail{% endblock %}</title>
-  <link rel="preload" href="{{ url_for('static', filename='style.css') }}?v=1.6" as="style">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.6">
+  <link rel="preload" href="{{ url_for('static', filename='style.css') }}?v=1.7" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.7">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -119,8 +119,8 @@
     </main>
   </div>
 
-  <script src="{{ url_for('static', filename='pos.js') }}?v=1.6" defer></script>
-  <script src="{{ url_for('static', filename='app.js') }}?v=1.6" defer></script>
+  <script src="{{ url_for('static', filename='pos.js') }}?v=1.7" defer></script>
+  <script src="{{ url_for('static', filename='app.js') }}?v=1.7" defer></script>
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

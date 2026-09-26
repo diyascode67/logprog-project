@@ -2895,3 +2895,314 @@ tbody tr:hover {
     color: #000;
   }
 }
+
+/* ========================================================================= */
+/* RESPONSIVE — Mobile First (< 768px), Tablet (768–1100px), Desktop (>1100) */
+/* ========================================================================= */
+
+/* ── Tablet (768px – 1100px) ──────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  /* Sidebar menyempit tapi tetap ada */
+  .sidebar {
+    width: 220px;
+  }
+  .content {
+    margin-left: 220px;
+  }
+
+  /* Metric grid jadi 2 kolom */
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 16px 20px 8px;
+  }
+
+  /* Dashboard panels jadi 1 kolom */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 10px 20px 20px;
+  }
+
+  /* POS layout: catalog atas, cart bawah */
+  .pos-layout {
+    grid-template-columns: 1fr;
+    padding: 14px 20px 20px;
+  }
+
+  .pos-cart-panel {
+    position: static;
+    top: auto;
+  }
+
+  .product-cards-grid {
+    max-height: 420px;
+  }
+
+  .topbar {
+    padding: 12px 20px;
+  }
+
+  .flash-area {
+    margin: 12px 20px 0;
+  }
+
+  .onboarding-panel {
+    margin: 6px 20px 10px;
+  }
+}
+
+/* ── Mobile (< 768px) ─────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Sidebar: off-canvas slide-in */
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 280ms var(--spring);
+    box-shadow: none;
+    padding: 24px 12px 20px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Overlay saat sidebar terbuka */
+  .sidebar.open::after {
+    content: '';
+    position: fixed;
+    inset: 0 0 0 260px;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+  }
+
+  /* Tombol hamburger muncul */
+  .mobile-menu {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  /* Content full width */
+  .content {
+    margin-left: 0;
+  }
+
+  /* Topbar lebih compact */
+  .topbar {
+    min-height: 56px;
+    padding: 10px 16px;
+    gap: 10px;
+  }
+
+  .topbar-title-group h1 {
+    font-size: 17px;
+  }
+
+  .topbar-title-group p {
+    display: none;
+  }
+
+  /* Sembunyikan "Online" badge & teks panjang di topbar actions */
+  .online {
+    display: none;
+  }
+
+  /* Tombol topbar lebih kecil */
+  .topbar-actions .button {
+    min-height: 32px;
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+
+  /* Flash area */
+  .flash-area {
+    margin: 10px 14px 0;
+  }
+
+  /* Main body padding */
+  .main-body {
+    padding-bottom: 24px;
+  }
+
+  /* Metric: 2 kolom kecil di mobile */
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 12px 14px 6px;
+  }
+
+  .metric-card {
+    min-height: 100px;
+    padding: 14px 14px;
+  }
+
+  .metric-card strong {
+    font-size: 19px;
+  }
+
+  /* Dashboard panels full width */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 8px 14px 16px;
+  }
+
+  /* Onboarding panel */
+  .onboarding-panel {
+    margin: 4px 14px 8px;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  /* Tabel: scroll horizontal */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 520px;
+  }
+
+  /* Panel padding lebih kecil */
+  .report-panel,
+  .chart-panel,
+  .low-stock {
+    padding: 14px;
+  }
+
+  /* POS Layout: full stack mobile */
+  .pos-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 10px 14px 20px;
+  }
+
+  .pos-cart-panel {
+    position: static;
+  }
+
+  /* Product grid: 2 kolom di mobile */
+  .product-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-height: 380px;
+  }
+
+  .product-card {
+    padding: 11px;
+  }
+
+  .product-name {
+    font-size: 12.5px;
+    min-height: 32px;
+  }
+
+  .product-price {
+    font-size: 14px;
+  }
+
+  /* Cart items list jangan terlalu tinggi */
+  .cart-items-list {
+    max-height: 280px;
+  }
+
+  /* Search box full width di mobile */
+  .pos-search-box {
+    width: 100%;
+  }
+
+  .panel-top-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Produk page layout */
+  .produk-layout {
+    grid-template-columns: 1fr !important;
+    padding: 10px 14px !important;
+  }
+
+  /* Laporan */
+  .laporan-grid {
+    grid-template-columns: 1fr !important;
+    padding: 10px 14px !important;
+  }
+
+  /* Modal checkout full width */
+  .apple-modal-dialog {
+    width: calc(100% - 20px);
+    margin: auto 10px;
+  }
+
+  .apple-sheet-box {
+    padding: 22px 18px 20px;
+  }
+
+  .sheet-title {
+    font-size: 17px;
+  }
+
+  /* Segment control text kecil */
+  .segment-btn {
+    font-size: 11px;
+    gap: 3px;
+    min-height: 30px;
+  }
+
+  .segment-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Success dialog */
+  .success-circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* Produk page search + button */
+  .produk-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ── Sangat kecil (< 400px) ─────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px 12px 4px;
+  }
+
+  .metric-card {
+    padding: 12px 10px;
+    min-height: 88px;
+  }
+
+  .metric-card strong {
+    font-size: 17px;
+  }
+
+  .product-cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .topbar {
+    padding: 8px 12px;
+  }
+
+  .topbar-title-group h1 {
+    font-size: 15px;
+  }
+}
+

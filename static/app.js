@@ -119,7 +119,17 @@
     });
   }
 
-  // ── Fast, Non-Blocking Motion System ────────────────────────────────────
+  // ── Mobile Sidebar: close when tapping outside ───────────────────────────
+  (function initMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    document.addEventListener('pointerdown', (e) => {
+      if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }, { passive: true });
+  })();
+
   function initMotion() {
     // Pure CSS page transitions are now used on .main-body for zero layout-thrashing
   }
