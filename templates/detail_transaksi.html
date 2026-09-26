@@ -57,6 +57,13 @@
     <button class="button primary full" onclick="window.print()">
       {{ icons.icon('receipt') }} Cetak Struk / Simpan PDF
     </button>
+    {% if user.role == 'Admin' %}
+      <form action="{{ url_for('hapus_transaksi', id_transaksi=transaksi.id) }}" method="post" style="margin-top: 10px;" onsubmit="return confirm('Yakin ingin membatalkan transaksi #{{ transaksi.id }}? Stok barang akan otomatis dikembalikan ke inventaris toko.')">
+        <button class="button danger full" type="submit">
+          {{ icons.icon('trash') }} Batalkan Transaksi Ini (Kembalikan Stok)
+        </button>
+      </form>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

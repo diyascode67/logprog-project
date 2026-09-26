@@ -666,6 +666,54 @@ def detail_transaksi(id_transaksi):
     return render_template("detail_transaksi.html", transaksi=transaksi_data, detail=detail)
 
 
+@app.post("/transaksi/<int:id_transaksi>/hapus")
+@login_required("Admin")
+def hapus_transaksi(id_transaksi):
+    conn = None
+    cursor = None
+    try:
+        conn = koneksi_db()
+        cursor = conn.cursor(dictionary=True)
+
+        # 1. Ambil detail produk yang dibeli untuk mengembalikan stok
+        cursor.execute("SELECT id_produk, jumlah FROM detail_transaksi WHERE id_transaksi = %s", (id_transaksi,))
+        items = cursor.fetchall()
+
+        if not items:
+            cursor.execute("SELECT id FROM transaksi WHERE id = %s", (id_transaksi,))
+            if not cursor.fetchone():
+                flash("Transaksi tidak ditemukan.", "error")
+                return redirect(url_for("transaksi"))
+
+        # 2. Kembalikan stok produk ke inventaris toko
+        for item in items:
+            cursor.execute("UPDATE produk SET stok = stok + %s WHERE id = %s", (item["jumlah"], item["id_produk"]))
+
+        # 3. Hapus data detail transaksi & transaksi
+        cursor.execute("DELETE FROM detail_transaksi WHERE id_transaksi = %s", (id_transaksi,))
+        cursor.execute("DELETE FROM transaksi WHERE id = %s", (id_transaksi,))
+
+        conn.commit()
+        flash(f"Transaksi #{id_transaksi} berhasil dibatalkan dan stok produk telah dikembalikan ke inventaris.", "success")
+    except sqlite3.OperationalError as error:
+        if conn:
+            conn.rollback()
+        if "locked" in str(error).lower():
+            flash("Database sedang dipakai proses lain. Coba lagi beberapa saat lagi.", "error")
+        else:
+            flash(f"Gagal membatalkan transaksi: {error}", "error")
+    except Exception as error:
+        if conn:
+            conn.rollback()
+        flash(f"Gagal membatalkan transaksi: {error}", "error")
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    return redirect(url_for("transaksi"))
+
+
 @app.get("/laporan")
 @login_required("Admin")
 def laporan():
