@@ -9,8 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}Smart Retail{% endblock %}</title>
-  <link rel="preload" href="{{ url_for('static', filename='style.css') }}?v=1.9" as="style">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.9">
+  <link rel="preload" href="{{ url_for('static', filename='style.css') }}?v=2.0" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -128,8 +128,8 @@
     </main>
   </div>
 
-  <script src="{{ url_for('static', filename='pos.js') }}?v=1.9" defer></script>
-  <script src="{{ url_for('static', filename='app.js') }}?v=1.9" defer></script>
+  <script src="{{ url_for('static', filename='pos.js') }}?v=2.0" defer></script>
+  <script src="{{ url_for('static', filename='app.js') }}?v=2.0" defer></script>
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

@@ -184,15 +184,21 @@ dialog.apple-modal-dialog * {
 }
 
 body.custom-cursor-enabled .custom-cursor,
-dialog .custom-cursor {
+dialog .custom-cursor,
+dialog > .custom-cursor {
   opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* When cursor is inside a dialog (top layer), remove contain & will-change so
    position:fixed is relative to the viewport, not the dialog box. */
+dialog .custom-cursor,
 dialog > .custom-cursor {
-  contain: none;
-  will-change: auto;
+  contain: none !important;
+  will-change: auto !important;
+  position: fixed !important;
+  z-index: 9999999 !important;
+  pointer-events: none !important;
 }
 
 .custom-cursor.is-pressed .custom-cursor__glyph {
@@ -2170,21 +2176,30 @@ dialog > .custom-cursor {
 }
 
 .mini-metrics {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  padding: 0 32px 14px;
+  padding: 0 32px 16px;
 }
 
 .mini-metrics article {
   display: flex;
-  align-items: center;
-  min-width: 220px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
-  padding: 14px 18px;
+  padding: 18px 20px;
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: #ffffff;
+  border-radius: var(--r-lg);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
+  min-width: 0;
+  transition: transform var(--dur) var(--spring), box-shadow var(--dur) var(--spring);
+}
+
+.mini-metrics article:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .mini-metrics article > span {
@@ -2192,30 +2207,47 @@ dialog > .custom-cursor {
   place-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: 11px;
   background: var(--apple-blue-soft);
   color: var(--apple-blue);
   flex-shrink: 0;
 }
 
 .mini-metrics article > span svg {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
+}
+
+.mini-metrics article > div {
+  width: 100%;
+  min-width: 0;
 }
 
 .mini-metrics article p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .mini-metrics article strong {
   display: block;
-  margin-top: 1px;
+  margin-top: 4px;
   color: var(--text-primary);
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.mini-metrics article strong small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  margin-left: 3px;
 }
 
 .mini-metrics .warning > span {
@@ -3132,32 +3164,53 @@ tbody tr:hover {
     align-items: center;
   }
 
-  /* 6. Dashboard Layout on Mobile */
+  /* 6. Dashboard Layout on Mobile: Clean Apple Widget Proportion */
   .metric-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     padding: 12px 14px 6px;
   }
 
   .metric-card {
-    min-height: 96px;
-    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 112px;
+    padding: 14px 14px 12px;
     border-radius: var(--r-md);
-  }
-
-  .metric-card strong {
-    font-size: 18px;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .metric-icon {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 9px;
   }
 
   .metric-icon svg {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .metric-card p {
+    margin: 8px 0 2px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text-secondary);
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .metric-card strong {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dashboard-grid {
@@ -3186,12 +3239,12 @@ tbody tr:hover {
     padding: 16px 14px;
   }
 
-  /* 7. Produk Page on Mobile */
+  /* 7. Produk Page on Mobile: Fixed Apple Widgets & Clean Toolbar */
   .toolbar {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 12px 14px 6px;
+    gap: 8px;
+    padding: 10px 14px 6px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -3201,38 +3254,73 @@ tbody tr:hover {
     max-width: 100%;
   }
 
-  .toolbar > .button {
-    width: 100%;
-    min-height: 42px;
-    border-radius: 12px;
-    font-size: 13.5px;
-    font-weight: 600;
+  /* Hide duplicate add button in toolbar on mobile because sticky topbar already has [+ Tambah] */
+  .toolbar .toolbar-add-btn {
+    display: none !important;
   }
 
   .mini-metrics {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    padding: 6px 14px 10px;
+    padding: 6px 14px 14px;
     width: 100%;
     box-sizing: border-box;
   }
 
   .mini-metrics article {
-    margin: 0;
-    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 14px 12px;
+    border-radius: var(--r-md);
+    min-width: 0;
+    min-height: 112px;
+    box-sizing: border-box;
+  }
+
+  .mini-metrics article > span {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+
+  .mini-metrics article > span svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mini-metrics article > div {
+    width: 100%;
     min-width: 0;
   }
 
   .mini-metrics article p {
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text-secondary);
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: clip;
+    display: block;
+    margin: 0;
   }
 
   .mini-metrics article strong {
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    margin-top: 3px;
+    display: block;
+  }
+
+  .mini-metrics article strong small {
+    font-size: 11.5px;
+    font-weight: 400;
   }
 
   .add-product {
@@ -3250,11 +3338,37 @@ tbody tr:hover {
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .form-grid .button {
+  .form-grid label {
+    font-size: 12px;
+    font-weight: 500;
+    gap: 6px;
+    color: var(--text-primary);
+  }
+
+  .form-grid input {
     min-height: 44px;
-    border-radius: 12px;
+    border-radius: var(--r-sm);
+    font-size: 16px !important;
+    background: #fbfbfd;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+  }
+
+  .form-grid input:focus {
+    background: #ffffff;
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+  }
+
+  .form-grid button {
+    min-height: 46px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: var(--r-pill);
+    margin-top: 4px;
   }
 
   /* 8. Table Panel: Clean Contained Horizontal Scroll */
@@ -3323,6 +3437,7 @@ tbody tr:hover {
 
   .product-card {
     padding: 10px;
+    border-radius: var(--r-md);
   }
 
   .product-name {
