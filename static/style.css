@@ -180,6 +180,13 @@ dialog .custom-cursor {
   opacity: 1 !important;
 }
 
+/* When cursor is inside a dialog (top layer), remove contain & will-change so
+   position:fixed is relative to the viewport, not the dialog box. */
+dialog > .custom-cursor {
+  contain: none;
+  will-change: auto;
+}
+
 .custom-cursor.is-pressed .custom-cursor__glyph {
   transform: scale(0.86);
 }
