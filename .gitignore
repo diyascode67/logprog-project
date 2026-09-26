@@ -29,3 +29,6 @@ Desktop.ini
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Local upload helper
+upload_to_github.bat
