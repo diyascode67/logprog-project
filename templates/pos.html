@@ -6,7 +6,7 @@
 {% block subtitle %}Pilih produk dan selesaikan transaksi belanja{% endblock %}
 
 {% block topbar_actions %}
-  <span class="online"><i></i> Kasir Siap</span>
+  <span class="online"><i></i> Online</span>
   <button id="shortcut-help" type="button" class="button apple-pill-btn" title="Cari produk (⌘K)">
     <span class="kbd-badge">⌘K</span> Cari
   </button>
@@ -20,6 +20,22 @@
 {% block content %}
 <div id="pos-alert" class="flash error hidden" role="status" aria-live="polite"></div>
 
+{% if not produk %}
+  <div class="pos-empty-catalog-center">
+    <div class="pos-empty-card panel">
+      <span class="pos-empty-hero-icon">{{ icons.icon('box') }}</span>
+      <h2>Katalog Produk Masih Kosong</h2>
+      <p>Belum ada produk yang terdaftar di database toko Anda. Tambahkan produk inventaris terlebih dahulu agar transaksi kasir dapat dilakukan.</p>
+      {% if user.role == 'Admin' %}
+        <a class="button primary apple-pill-btn" href="{{ url_for('produk') }}#tambah-produk">
+          {{ icons.icon('plus') }} Tambah Produk Sekarang
+        </a>
+      {% else %}
+        <p class="empty-role-hint">Silakan hubungi Admin toko untuk menginput daftar produk inventaris.</p>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
 <div class="pos-layout">
   <!-- SISI KIRI: Katalog Produk Siap Jual (Golden Ratio ~61.8%) -->
   <section class="panel pos-catalog-panel" aria-labelledby="katalog-heading">
@@ -195,6 +211,7 @@
     </div>
   </aside>
 </div>
+{% endif %}
 
 <!-- ========================================================================= -->
 <!-- APPLE CHECKOUT SHEET MODAL                                                -->
