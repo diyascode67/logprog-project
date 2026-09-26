@@ -54,6 +54,10 @@ html {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -64,6 +68,10 @@ body {
   font-size: 14px;
   line-height: 1.42857;
   letter-spacing: -0.011em;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1, h2, h3, h4 {
@@ -248,7 +256,11 @@ dialog > .custom-cursor {
 /* ── App Shell Structure ─────────────────────────────────────────────────── */
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* ── Sidebar (macOS Navigation Bar) ──────────────────────────────────────── */
@@ -264,6 +276,21 @@ dialog > .custom-cursor {
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border-right: 1px solid var(--line);
   padding: 20px 12px 18px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
 }
 
 .brand {
@@ -418,11 +445,13 @@ dialog > .custom-cursor {
 /* ── Content & Clean Topbar ──────────────────────────────────────────────── */
 .content {
   min-width: 0;
+  max-width: 100%;
   flex: 1;
   margin-left: 250px;
   display: flex;
   flex-direction: column;
   container-type: inline-size;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -2512,90 +2541,108 @@ tbody tr:hover {
 }
 
 /* ── Login Page ──────────────────────────────────────────────────────────── */
+/* Modern Apple-Style Login System */
 .login-page {
-  background: #f7f7f9;
+  background: var(--bg);
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .login-layout {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  place-items: center;
-  padding: 42px 24px;
+  min-height: 100dvh;
+  padding: 40px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-panel {
-  width: min(524px, 100%);
-  border: 1px solid #e9e9ed;
-  border-radius: 38px;
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
   background: #ffffff;
-  padding: 50px 50px 48px;
-  box-shadow: 0 22px 48px rgba(28, 28, 34, .07);
+  padding: 44px 38px 40px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
 }
 
 .login-header {
-  display: grid;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .login-brand-icon {
   display: grid;
-  width: 60px;
-  height: 60px;
   place-items: center;
-  border-radius: 20px;
-  background: #e6f1ff;
-  color: #0876ff;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: var(--apple-blue);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.28);
 }
 
-.login-brand-icon .icon {
+.login-brand-icon svg {
   width: 28px;
   height: 28px;
 }
 
 .login-brand-name {
-  margin: 18px 0 0;
-  color: #17171a;
-  font-size: 27px;
+  margin: 14px 0 0;
+  color: var(--text-primary);
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: -.045em;
+  letter-spacing: -0.03em;
+}
+
+.login-brand-name span {
+  color: var(--apple-blue);
 }
 
 .login-form-wrap {
-  margin: 18px auto 0;
+  margin-top: 14px;
   width: 100%;
 }
 
 .login-form-wrap h1 {
   margin: 0;
-  color: #17171a;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -.035em;
+  color: var(--text-primary);
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   text-align: center;
+  line-height: 1.25;
 }
 
 .login-form-wrap > p {
-  max-width: 350px;
-  margin: 10px auto 38px;
-  color: #7a8090;
-  font-size: 16px;
-  line-height: 1.55;
+  max-width: 320px;
+  margin: 6px auto 26px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.5;
   text-align: center;
 }
 
 .login-form-wrap form {
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
 
 .login-field {
   display: grid;
-  gap: 9px;
+  gap: 7px;
 }
 
 .login-field label {
-  color: #687083;
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -2607,8 +2654,12 @@ tbody tr:hover {
 
 .forgot-password {
   color: var(--apple-blue);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
 }
 
 .login-input-wrap {
@@ -2619,30 +2670,33 @@ tbody tr:hover {
 .login-password-toggle {
   position: absolute;
   top: 50%;
-  display: grid;
-  width: 22px;
-  height: 22px;
-  place-items: center;
-  color: #8a94a8;
   transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--text-tertiary);
 }
 
 .login-input-icon {
-  left: 18px;
+  left: 14px;
   pointer-events: none;
 }
 
 .login-input-icon svg,
 .login-password-toggle svg {
-  width: 21px;
-  height: 21px;
+  width: 18px;
+  height: 18px;
 }
 
 .login-password-toggle {
-  right: 16px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
   border: 0;
+  border-radius: 50%;
   background: transparent;
   padding: 0;
+  cursor: pointer;
+  transition: color var(--dur) var(--spring);
 }
 
 .login-password-toggle:hover,
@@ -2652,130 +2706,40 @@ tbody tr:hover {
 
 .login-form-wrap input {
   width: 100%;
-  min-height: 60px;
-  border: 1px solid transparent;
-  border-radius: 18px;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
   background: #f5f5f7;
-  padding: 10px 50px;
+  padding: 10px 42px;
   outline: 0;
-  font-size: 16px;
-  color: #24262c;
+  font-size: 14px;
+  color: var(--text-primary);
   transition: border-color var(--dur) var(--spring), background var(--dur) var(--spring), box-shadow var(--dur) var(--spring);
+  box-sizing: border-box;
 }
 
 .login-form-wrap input:focus {
   border-color: var(--apple-blue);
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(0, 113, 227, .1);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
 }
 
 .login-submit.button {
-  min-height: 64px;
-  margin-top: 8px;
-  border-radius: 18px;
-  background: #0878ff;
-  box-shadow: 0 8px 18px rgba(8, 120, 255, .18);
-  font-size: 17px;
+  min-height: 48px;
+  margin-top: 6px;
+  border-radius: 14px;
+  background: var(--apple-blue);
+  font-size: 15px;
   font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.22);
 }
 
 .login-submit.button:hover {
-  background: #006de8;
-  box-shadow: 0 10px 22px rgba(8, 120, 255, .25);
+  background: var(--apple-blue-hover);
+  box-shadow: 0 6px 18px rgba(0, 113, 227, 0.32);
 }
 
-/* ── Responsive Adaptations ──────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-  .pos-layout {
-    grid-template-columns: 1fr;
-  }
 
-  .pos-cart-panel {
-    position: static;
-  }
-
-  .metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .form-grid .button {
-    grid-column: span 3;
-  }
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 250px;
-    transform: translateX(-105%);
-    transition: transform 200ms var(--spring);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-    box-shadow: var(--shadow-sheet);
-  }
-
-  .content {
-    margin-left: 0;
-  }
-
-  .topbar {
-    min-height: 64px;
-    padding: 12px 18px;
-  }
-
-  .topbar h1 {
-    font-size: 18px;
-  }
-
-  .topbar p, .online {
-    display: none;
-  }
-
-  .mobile-menu {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border: 0;
-    border-radius: var(--r-sm);
-    background: var(--apple-blue-soft);
-    color: var(--apple-blue);
-    cursor: pointer;
-    margin-right: 4px;
-  }
-
-  .pos-layout, .metric-grid, .dashboard-grid, .table-panel, .toolbar, .mini-metrics, .panel.add-product, .flash-area {
-    padding-left: 18px;
-    padding-right: 18px;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .metric-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid .button {
-    grid-column: auto;
-  }
-
-  .product-cards-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 
 @media print {
   html,
@@ -2897,11 +2861,10 @@ tbody tr:hover {
 }
 
 /* ========================================================================= */
-/* RESPONSIVE — Tablet (≤1100px), Mobile (≤767px), Small (≤400px)           */
+/* COMPLETE NATIVE-APP RESPONSIVE ENGINE (Tablet, Mobile, Ultra-Small)       */
 /* ========================================================================= */
 
-/* ── Fix topbar title overflow di semua ukuran ─────────────────────────────
-   Pastikan title tidak mendorong action buttons keluar layar.               */
+/* Fix layout bounds across all screen sizes */
 .topbar-title-group {
   min-width: 0;
   flex: 1;
@@ -2912,14 +2875,14 @@ tbody tr:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin: 0;
 }
 
-/* Topbar actions tidak boleh shrink — tombol harus selalu terlihat */
 .topbar-actions {
   flex-shrink: 0;
 }
 
-/* ── Tablet (768px – 1100px) ──────────────────────────────────────────────── */
+/* ── Tablet (768px - 1100px) ──────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .sidebar {
     width: 220px;
@@ -2944,7 +2907,7 @@ tbody tr:hover {
     top: auto;
   }
   .product-cards-grid {
-    max-height: 420px;
+    max-height: 440px;
   }
   .topbar {
     padding: 12px 20px;
@@ -2957,316 +2920,531 @@ tbody tr:hover {
   }
 }
 
-/* ── Mobile (≤767px) ──────────────────────────────────────────────────────── */
-@media (max-width: 767px) {
+/* ── Mobile Native App (<= 768px) ─────────────────────────────────────────── */
+@media (max-width: 768px) {
 
-  /* ── Sidebar: off-canvas slide-in ─────────────────────────────────────── */
-  .sidebar {
-    width: 270px;
-    transform: translateX(-100%);
-    transition: transform 280ms var(--spring);
-    box-shadow: none;
-    padding: 24px 12px 20px;
-  }
-  .sidebar.open {
-    transform: translateX(0);
-    box-shadow: 4px 0 40px rgba(0,0,0,0.15);
-  }
-  /* Dim overlay saat sidebar terbuka */
-  .sidebar.open::after {
-    content: '';
-    position: fixed;
-    inset: 0 0 0 270px;
-    z-index: -1;
-    background: rgba(0,0,0,0.30);
-    backdrop-filter: blur(2px);
+  /* 1. Global Viewport Lockdown: Zero Horizontal Scroll */
+  html, body {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
-  /* ── Content full width ─────────────────────────────────────────────────── */
-  .content {
+  .app-shell,
+  .content,
+  .main-body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     margin-left: 0;
   }
 
-  /* ── Hamburger button muncul ────────────────────────────────────────────── */
+  /* 2. Prevent iOS/Android auto-zoom on form inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* 3. Mobile Login: Seamless Edge-to-Edge Native Screen */
+  body.login-page {
+    background: #ffffff;
+  }
+
+  .login-layout {
+    min-height: 100dvh;
+    padding: max(24px, env(safe-area-inset-top)) 24px max(32px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+  }
+
+  .login-panel {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    width: 100%;
+    max-width: 380px;
+    background: transparent;
+  }
+
+  .login-brand-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+  }
+
+  .login-brand-name {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+
+  .login-form-wrap {
+    margin-top: 20px;
+  }
+
+  .login-form-wrap h1 {
+    font-size: 22px;
+  }
+
+  .login-form-wrap > p {
+    font-size: 13.5px;
+    margin: 6px auto 22px;
+  }
+
+  .login-form-wrap input {
+    min-height: 50px;
+    border-radius: 14px;
+    background: #f2f2f7;
+    border: 1px solid transparent;
+    padding: 10px 44px;
+  }
+
+  .login-form-wrap input:focus {
+    background: #ffffff;
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+  }
+
+  .login-submit.button {
+    min-height: 50px;
+    border-radius: 14px;
+    font-size: 16px;
+    margin-top: 4px;
+  }
+
+  /* 4. Native App Sidebar Drawer & Backdrop Overlay */
+  .sidebar {
+    width: min(280px, 80vw);
+    transform: translateX(-100%);
+    transition: transform 260ms var(--spring);
+    box-shadow: none;
+    padding: max(20px, env(safe-area-inset-top)) 14px max(24px, env(safe-area-inset-bottom));
+    z-index: 99;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 6px 0 32px rgba(0, 0, 0, 0.18);
+  }
+
+  .sidebar-close {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 98;
+    background: rgba(0, 0, 0, 0.40);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 240ms ease;
+  }
+
+  .sidebar.open + .sidebar-backdrop,
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 5. Mobile App Native Topbar */
+  .topbar {
+    min-height: 54px;
+    height: 54px;
+    padding: 0 14px;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .mobile-menu {
     display: grid;
     place-items: center;
     width: 36px;
     height: 36px;
-    flex-shrink: 0;
     border: 0;
     border-radius: var(--r-sm);
     background: transparent;
     color: var(--text-primary);
+    flex-shrink: 0;
   }
 
-  /* ── Topbar: compact & tidak overflow ──────────────────────────────────── */
-  .topbar {
-    min-height: 56px;
-    padding: 8px 14px;
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
-  /* Title: truncate bila panjang */
   .topbar-title-group h1 {
     font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
-  .topbar-title-group p {
-    display: none;
-  }
-  /* Sembunyikan badge online di mobile */
-  .online {
-    display: none;
-  }
-  /* Sembunyikan label teks ⌘K di mobile, hanya icon */
+
+  .topbar-title-group p,
+  .topbar .online,
+  .topbar #shortcut-help,
   .kbd-badge {
-    display: none;
+    display: none !important;
   }
-  /* Tombol topbar lebih kecil */
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   .topbar-actions .button,
   .topbar-actions .apple-pill-btn {
-    min-height: 30px;
-    padding: 4px 10px;
+    min-height: 32px;
+    height: 32px;
+    padding: 0 10px;
     font-size: 12px;
     gap: 4px;
   }
-  .topbar-actions .button .icon,
-  .topbar-actions .apple-pill-btn .icon {
-    width: 13px;
-    height: 13px;
-  }
-  /* Hanya tampilkan icon (tanpa teks) untuk tombol secondary di topbar */
-  .topbar-actions .button:not(.primary) .btn-label,
-  .topbar-actions .apple-pill-btn:not(.primary) .btn-label {
+
+  /* Secondary button in topbar only shows icon on mobile to preserve layout */
+  .topbar-actions .button:not(.primary) span,
+  .topbar-actions .apple-pill-btn:not(.primary) span {
     display: none;
   }
 
-  /* ── Flash area ─────────────────────────────────────────────────────────── */
-  .flash-area {
-    margin: 10px 14px 0;
+  .topbar-actions .button:not(.primary),
+  .topbar-actions .apple-pill-btn:not(.primary) {
+    padding: 0 8px;
+    min-width: 32px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  /* ── Main body ──────────────────────────────────────────────────────────── */
-  .main-body {
-    padding-bottom: 28px;
-  }
-
-  /* ── Metric grid: 2 kolom di mobile ────────────────────────────────────── */
+  /* 6. Dashboard Layout on Mobile */
   .metric-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     padding: 12px 14px 6px;
   }
+
   .metric-card {
     min-height: 96px;
     padding: 12px 14px;
+    border-radius: var(--r-md);
   }
+
   .metric-card strong {
     font-size: 18px;
   }
+
   .metric-icon {
     width: 32px;
     height: 32px;
     border-radius: 8px;
   }
+
   .metric-icon svg {
     width: 15px;
     height: 15px;
   }
 
-  /* ── Dashboard grid: 1 kolom ────────────────────────────────────────────── */
   .dashboard-grid {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 8px 14px 16px;
   }
 
-  /* ── Onboarding panel: stack vertikal di mobile ─────────────────────────── */
   .onboarding-panel {
     flex-direction: column;
     align-items: flex-start;
     margin: 4px 14px 8px;
     padding: 16px;
     gap: 10px;
-  }
-  .onboarding-body p {
-    font-size: 12px;
+    border-radius: var(--r-lg);
   }
 
-  /* ── Panel padding ──────────────────────────────────────────────────────── */
-  .report-panel,
-  .chart-panel,
-  .low-stock {
-    padding: 14px;
-  }
-  .table-panel {
-    padding: 14px;
-  }
-
-  /* ── Tabel: scroll horizontal ───────────────────────────────────────────── */
-  .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  table {
-    min-width: 500px;
-  }
-  th, td {
-    white-space: nowrap;
-    font-size: 12.5px;
-    padding: 9px 10px;
-  }
-
-  /* ── Toolbar produk (search + tambah) ──────────────────────────────────── */
-  .toolbar {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 14px 0;
-  }
-  .toolbar .search {
-    flex: 1 1 100%;
-    min-width: 0;
-  }
-  .toolbar > .button {
-    flex: 1;
-    min-height: 36px;
+  .onboarding-panel .button {
+    width: 100%;
     justify-content: center;
   }
 
-  /* ── Mini metrics (produk page) ─────────────────────────────────────────── */
-  .mini-metrics {
-    gap: 10px;
-    padding: 10px 14px;
-  }
-  .mini-metrics article {
-    padding: 12px 14px;
-    gap: 10px;
+  .report-panel,
+  .chart-panel,
+  .low-stock {
+    padding: 16px 14px;
   }
 
-  /* ── Add product section ────────────────────────────────────────────────── */
-  .add-product {
-    margin: 0 14px;
-    padding: 16px;
+  /* 7. Produk Page on Mobile */
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px 6px;
+    width: 100%;
+    box-sizing: border-box;
   }
+
+  .toolbar .search {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .toolbar > .button {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .mini-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 6px 14px 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mini-metrics article {
+    margin: 0;
+    padding: 12px;
+    min-width: 0;
+  }
+
+  .mini-metrics article p {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mini-metrics article strong {
+    font-size: 16px;
+  }
+
+  .add-product {
+    margin: 0 14px 14px;
+    padding: 16px;
+    border-radius: var(--r-lg);
+  }
+
   .panel-title {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
     margin-bottom: 12px;
   }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
 
-  /* ── POS layout: stack vertikal ─────────────────────────────────────────── */
+  .form-grid .button {
+    min-height: 44px;
+    border-radius: 12px;
+  }
+
+  /* 8. Table Panel: Clean Contained Horizontal Scroll */
+  .table-panel {
+    margin: 0 14px 20px;
+    padding: 14px 0 0;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    max-width: calc(100% - 28px);
+    box-sizing: border-box;
+  }
+
+  .table-panel .panel-title {
+    padding: 0 14px 8px;
+    margin-bottom: 4px;
+  }
+
+  .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    display: block;
+  }
+
+  table {
+    min-width: 520px;
+    width: 100%;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+
+  /* 9. POS Layout on Mobile */
   .pos-layout {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 10px 14px 20px;
+    gap: 14px;
+    padding: 10px 14px 24px;
   }
+
   .pos-cart-panel {
     position: static;
     top: auto;
   }
 
-  /* ── Product grid: 2 kolom ──────────────────────────────────────────────── */
-  .product-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 9px;
-    max-height: 360px;
-  }
-  .product-card {
-    padding: 10px;
-  }
-  .product-name {
-    font-size: 12px;
-    min-height: 30px;
-  }
-  .product-price {
-    font-size: 13.5px;
-  }
-
-  /* ── Search box full width ──────────────────────────────────────────────── */
-  .pos-search-box {
-    width: 100%;
-    max-width: none;
-  }
   .panel-top-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
-  .panel-top-bar > div:first-child {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    flex-wrap: wrap;
+
+  .pos-search-box {
+    width: 100%;
+    max-width: 100%;
   }
 
-  /* ── Cart ───────────────────────────────────────────────────────────────── */
+  .product-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    max-height: 380px;
+  }
+
+  .product-card {
+    padding: 10px;
+  }
+
+  .product-name {
+    font-size: 12px;
+    min-height: 30px;
+  }
+
+  .product-price {
+    font-size: 13.5px;
+  }
+
   .cart-items-list {
-    max-height: 250px;
+    max-height: 260px;
   }
 
-  /* ── Modal checkout: full width ─────────────────────────────────────────── */
+  /* 10. Native iOS/Android Bottom Sheet for Checkout Modal */
   .apple-modal-dialog {
-    width: calc(100% - 24px);
-    max-width: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 24px 24px 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    max-height: 90dvh;
+    animation: apple-sheet-up 240ms var(--spring);
   }
+
+  @keyframes apple-sheet-up {
+    0% { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
   .apple-sheet-box {
-    padding: 20px 18px 18px;
+    border-radius: 24px 24px 0 0;
+    padding: 22px 18px max(24px, env(safe-area-inset-bottom));
   }
+
   .sheet-title {
-    font-size: 17px;
+    font-size: 18px;
   }
+
   .segment-btn {
     font-size: 11px;
     gap: 3px;
-    min-height: 30px;
+    min-height: 32px;
   }
+
   .segment-btn svg {
     width: 12px;
     height: 12px;
   }
 
-  /* ── Produk page: panel jadi 1 kolom ───────────────────────────────────── */
-  .produk-layout {
-    grid-template-columns: 1fr !important;
-    padding: 10px 14px !important;
+  .quick-cash-presets {
+    gap: 6px;
   }
-  .laporan-grid {
-    grid-template-columns: 1fr !important;
-    padding: 10px 14px !important;
+
+  .quick-cash-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .checkout-submit-btn {
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  /* 11. Struk / Detail Transaksi on Mobile */
+  .receipt {
+    margin: 10px 14px 20px;
+    padding: 20px 16px;
+    border-radius: var(--r-lg);
+  }
+
+  .receipt-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .receipt-actions .button {
+    min-height: 44px;
+    font-size: 13.5px;
+  }
+
+  /* Flash area */
+  .flash-area {
+    margin: 8px 14px 0;
+  }
+
+  .flash {
+    padding: 9px 14px;
+    font-size: 12.5px;
   }
 }
 
-/* ── Sangat kecil (≤400px) ───────────────────────────────────────────────── */
-@media (max-width: 400px) {
+/* ── Ultra-Small Phones (<= 380px) ────────────────────────────────────────── */
+@media (max-width: 380px) {
   .topbar {
-    padding: 7px 12px;
+    padding: 0 10px;
   }
   .topbar-title-group h1 {
     font-size: 14px;
   }
   .metric-grid {
     gap: 8px;
-    padding: 10px 12px 4px;
+    padding: 10px 10px 4px;
   }
   .metric-card {
     min-height: 84px;
-    padding: 10px 10px;
+    padding: 10px;
   }
   .metric-card strong {
     font-size: 16px;
   }
   .product-cards-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 7px;
-    max-height: 320px;
+    gap: 6px;
   }
   .product-card {
-    padding: 9px;
+    padding: 8px;
   }
 }
-
-

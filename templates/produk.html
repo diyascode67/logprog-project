@@ -7,9 +7,9 @@
 
 {% block topbar_actions %}
   <span class="online"><i></i> SISTEM ONLINE</span>
-  <a class="button" href="{{ url_for('pos') }}">{{ icons.icon('cart') }} Kasir</a>
+  <a class="button" href="{{ url_for('pos') }}">{{ icons.icon('cart') }} <span>Kasir</span></a>
   {% if user.role == 'Admin' %}
-    <a class="button primary" href="#tambah-produk">{{ icons.icon('plus') }} Tambah Produk</a>
+    <a class="button primary" href="#tambah-produk">{{ icons.icon('plus') }} <span>Tambah</span></a>
   {% endif %}
 {% endblock %}
 

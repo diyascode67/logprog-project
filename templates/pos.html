@@ -12,7 +12,7 @@
   </button>
   {% if user.role == 'Admin' %}
     <a class="button apple-pill-btn" href="{{ url_for('produk') }}">
-      {{ icons.icon('box') }} Produk
+      {{ icons.icon('box') }} <span>Produk</span>
     </a>
   {% endif %}
 {% endblock %}
