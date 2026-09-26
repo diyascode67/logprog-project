@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+
+{% block title %}Riwayat Transaksi | Smart Retail{% endblock %}
+{% block heading %}Riwayat Transaksi{% endblock %}
+{% block subtitle %}Daftar seluruh aktivitas transaksi kasir toko{% endblock %}
+
+{% block topbar_actions %}
+  <a class="button primary" href="{{ url_for('pos') }}">
+    {{ icons.icon('plus') }} Transaksi Baru
+  </a>
+{% endblock %}
+
+{% block content %}
+<section class="panel table-panel">
+  <div class="panel-title">
+    <div>
+      <h2>Log Transaksi</h2>
+      <span>{{ transaksi|length }} transaksi tersimpan</span>
+    </div>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>TANGGAL</th>
+          <th>KASIR</th>
+          <th>TOTAL</th>
+          <th style="text-align: right;">AKSI</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in transaksi %}
+          <tr>
+            <td><span class="id-tag">#{{ item.id }}</span></td>
+            <td>{{ item.tanggal|tanggal_indonesia('%d %B %Y, %H:%M') }}</td>
+            <td><strong>{{ item.username }}</strong></td>
+            <td class="price">{{ item.total_bayar|rupiah }}</td>
+            <td style="text-align: right;">
+              <a class="button small" href="{{ url_for('detail_transaksi', id_transaksi=item.id) }}">
+                Lihat Struk {{ icons.icon('chevron-right') }}
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="empty">Belum ada riwayat transaksi.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

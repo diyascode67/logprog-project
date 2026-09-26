@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+{% block title %}Laporan | Smart Retail{% endblock %}
+{% block heading %}Laporan Penjualan{% endblock %}
+{% block subtitle %}Ringkasan performa toko dari seluruh transaksi{% endblock %}
+{% block content %}
+<section class="metric-grid two">
+  <article class="metric-card"><span class="metric-icon blue">{{ icons.icon('wallet') }}</span><p>Total Pendapatan</p><strong>{{ ringkasan.total_pendapatan|rupiah }}</strong></article>
+  <article class="metric-card"><span class="metric-icon purple">{{ icons.icon('receipt') }}</span><p>Total Transaksi</p><strong>{{ ringkasan.total_transaksi }} <small>transaksi</small></strong></article>
+</section>
+<section class="dashboard-grid report-grid">
+  <article class="panel report-panel"><div class="panel-title"><h2>Produk Terlaris</h2><span>Berdasarkan jumlah terjual</span></div>{% for item in terlaris %}<div class="rank-row"><span>{{ loop.index }}</span><strong title="{{ item.nama_produk }}">{{ item.nama_produk }}</strong><b>{{ item.total_terjual }} unit</b></div>{% else %}<p class="empty">Data penjualan belum tersedia.</p>{% endfor %}</article>
+  <article class="panel low-stock"><div class="panel-title"><h2>Stok Hampir Habis</h2><span class="badge warning-badge">Perlu restok</span></div>{% for item in stok_menipis %}<div class="stock-row"><span>{{ item.nama_produk }}</span><b>{{ item.stok }} tersisa</b></div>{% else %}<p class="empty">Tidak ada stok yang menipis.</p>{% endfor %}</article>
+</section>
+{% endblock %}

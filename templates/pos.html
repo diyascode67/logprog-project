@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+
+{% block title %}Kasir | Smart Retail{% endblock %}
+{% block heading %}Kasir{% endblock %}
+{% block subtitle %}Pilih produk dan selesaikan transaksi belanja{% endblock %}
+
+{% block topbar_actions %}
+  <span class="online"><i></i> Kasir Siap</span>
+  <button id="shortcut-help" type="button" class="button apple-pill-btn" title="Cari produk (⌘K)">
+    <span class="kbd-badge">⌘K</span> Cari
+  </button>
+  {% if user.role == 'Admin' %}
+    <a class="button apple-pill-btn" href="{{ url_for('produk') }}">
+      {{ icons.icon('box') }} Produk
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="pos-alert" class="flash error hidden" role="status" aria-live="polite"></div>
+
+<div class="pos-layout">
+  <!-- SISI KIRI: Katalog Produk Siap Jual (Golden Ratio ~61.8%) -->
+  <section class="panel pos-catalog-panel" aria-labelledby="katalog-heading">
+    <div class="panel-top-bar">
+      <div>
+        <h2 id="katalog-heading" class="panel-section-title">Katalog</h2>
+        <p class="panel-section-subtitle">
+          <span id="product-count" class="counter-highlight">{{ produk|length }}</span> produk tersedia
+        </p>
+      </div>
+
+      <div class="pos-search-box">
+        <span class="pos-search-icon">{{ icons.icon('search') }}</span>
+        <input
+          id="product-search"
+          type="search"
+          placeholder="Cari nama atau kategori (⌘K)..."
+          autocomplete="off"
+          aria-label="Cari produk"
+        >
+      </div>
+    </div>
+
+    <div id="product-grid" class="product-cards-grid">
+      {% for item in produk %}
+        <article
+          class="product-card"
+          data-product
+          data-search="{{ item.id }} {{ item.nama_produk }} {{ item.kategori }}"
+        >
+          <div class="product-card-header">
+            <span class="category-pill">{{ item.kategori }}</span>
+            <span class="stock-pill {% if item.stok == 0 %}danger{% elif item.stok < 10 %}warning{% else %}available{% endif %}">
+              Stok {{ item.stok }}
+            </span>
+          </div>
+
+          <div class="product-card-body">
+            <h3 class="product-name" title="{{ item.nama_produk }}">{{ item.nama_produk }}</h3>
+            <p class="product-price">{{ item.harga_jual|rupiah }}</p>
+          </div>
+
+          <div class="product-card-footer">
+            <div class="stepper-control">
+              <button
+                type="button"
+                class="stepper-step-btn"
+                onclick="window.stepProductQty({{ item.id }}, -1)"
+                aria-label="Kurangi"
+              >{{ icons.icon('minus') }}</button>
+              <input
+                id="quantity-{{ item.id }}"
+                class="stepper-input-num"
+                type="number"
+                min="1"
+                max="{{ item.stok }}"
+                value="1"
+                readonly
+                aria-label="Jumlah {{ item.nama_produk }}"
+              >
+              <button
+                type="button"
+                class="stepper-step-btn"
+                onclick="window.stepProductQty({{ item.id }}, 1)"
+                aria-label="Tambah"
+              >{{ icons.icon('plus') }}</button>
+            </div>
+
+            <button
+              type="button"
+              class="button primary add-product apple-pill-btn"
+              data-id="{{ item.id }}"
+              data-input="quantity-{{ item.id }}"
+            >
+              Tambah
+            </button>
+          </div>
+        </article>
+      {% else %}
+        <div class="empty-state-box col-span-full">
+          <div class="empty-state-icon">{{ icons.icon('box') }}</div>
+          <h3>Belum ada produk</h3>
+          <p>Tambahkan produk dari menu Produk.</p>
+          {% if user.role == 'Admin' %}
+            <a class="button primary apple-pill-btn" href="{{ url_for('produk') }}">
+              Kelola Produk
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="search-empty" class="empty-state-box hidden">
+      <div class="empty-state-icon">{{ icons.icon('search') }}</div>
+      <h3>Tidak ditemukan</h3>
+      <p>Coba kata kunci lain.</p>
+    </div>
+  </section>
+
+  <!-- SISI KANAN: Keranjang & Pembayaran (Golden Ratio ~38.2%) -->
+  <aside class="panel pos-cart-panel" aria-labelledby="cart-heading">
+    <div class="cart-header">
+      <div class="cart-header-title">
+        <span class="cart-badge-icon">{{ icons.icon('cart') }}</span>
+        <h2 id="cart-heading">Keranjang</h2>
+      </div>
+      <span id="cart-count" class="badge info-badge apple-pill-badge">{{ cart|length }} item</span>
+    </div>
+
+    <!-- Daftar item dalam keranjang (scrollable) -->
+    <div id="cart-items" class="cart-items-list">
+      {% for item in cart %}
+        <div class="cart-row" data-cart-id="{{ item.id_produk }}">
+          <div class="cart-row-main">
+            <div class="cart-row-info">
+              <p class="cart-row-title">{{ item.nama }}</p>
+              <p class="cart-row-unit">{{ item.harga|rupiah }} / item</p>
+            </div>
+            <p class="cart-row-subtotal">{{ item.subtotal|rupiah }}</p>
+          </div>
+          <div class="cart-row-bottom">
+            <div class="cart-stepper">
+              <button
+                type="button"
+                class="stepper-btn"
+                data-cart-change="{{ item.id_produk }}"
+                data-delta="-1"
+                aria-label="Kurangi"
+              >{{ icons.icon('minus') }}</button>
+              <span class="stepper-val">{{ item.jumlah }}</span>
+              <button
+                type="button"
+                class="stepper-btn"
+                data-cart-change="{{ item.id_produk }}"
+                data-delta="1"
+                aria-label="Tambah"
+              >{{ icons.icon('plus') }}</button>
+            </div>
+            <button
+              type="button"
+              class="cart-delete-btn"
+              data-cart-remove="{{ item.id_produk }}"
+            >
+              Hapus
+            </button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Keranjang kosong -->
+    <div id="cart-empty" class="cart-empty-panel {% if cart %}hidden{% endif %}">
+      <div class="cart-empty-icon">{{ icons.icon('cart') }}</div>
+      <p class="cart-empty-title">Keranjang Kosong</p>
+      <p class="cart-empty-subtitle">Pilih produk di sebelah kiri untuk menambah pesanan.</p>
+    </div>
+
+    <!-- Footer Checkout -->
+    <div class="cart-footer">
+      <div class="cart-total-display">
+        <span class="total-label">Total</span>
+        <strong id="cart-total" class="total-value">{{ total|rupiah }}</strong>
+      </div>
+      <button
+        id="open-payment"
+        type="button"
+        class="button primary full checkout-btn apple-pill-btn"
+        {% if not cart %}disabled{% endif %}
+      >
+        <span>Lanjutkan Pembayaran</span>
+        &gt;
+      </button>
+    </div>
+  </aside>
+</div>
+
+<!-- ========================================================================= -->
+<!-- APPLE CHECKOUT SHEET MODAL                                                -->
+<!-- ========================================================================= -->
+<dialog id="payment-dialog" class="apple-modal-dialog">
+  <form id="payment-form" method="dialog" class="apple-sheet-box">
+    <!-- Header Modal -->
+    <div class="sheet-header">
+      <div class="sheet-title-group">
+        <h2 class="sheet-title">Pembayaran</h2>
+        <p class="sheet-desc">Pilih metode pembayaran</p>
+      </div>
+      <button
+        type="button"
+        class="sheet-close-btn"
+        value="cancel"
+        onclick="document.getElementById('payment-dialog').close()"
+        aria-label="Tutup"
+      >
+        {{ icons.icon('close') }}
+      </button>
+    </div>
+
+    <!-- Segmented Control Ala Apple -->
+    <div class="payment-segmented-control" role="tablist">
+      <button type="button" class="segment-btn active" data-method="tunai" role="tab" aria-selected="true">
+        {{ icons.icon('banknotes') }} Tunai
+      </button>
+      <button type="button" class="segment-btn" data-method="qris" role="tab" aria-selected="false">
+        {{ icons.icon('qrcode') }} QRIS
+      </button>
+      <button type="button" class="segment-btn" data-method="transfer" role="tab" aria-selected="false">
+        {{ icons.icon('wallet') }} Transfer / Kartu
+      </button>
+    </div>
+
+    <!-- Ringkasan Tagihan -->
+    <div class="sheet-bill-summary">
+      <div class="bill-row">
+        <span class="bill-label">Total Tagihan</span>
+        <span id="payment-total" class="bill-amount">{{ total|rupiah }}</span>
+      </div>
+      <div id="payment-items-summary" class="bill-items-badge">
+        {{ cart|length }} produk
+      </div>
+    </div>
+
+    <!-- VIEW 1: TUNAI -->
+    <div id="method-view-tunai" class="payment-method-view active">
+      <div class="quick-cash-container">
+        <span class="quick-cash-label">Pecahan Cepat</span>
+        <div class="quick-cash-presets">
+          <button type="button" class="cash-preset-chip" id="btn-uang-pas">
+            Uang Pas
+          </button>
+          <button type="button" class="cash-preset-chip" data-amount="20000">
+            20.000
+          </button>
+          <button type="button" class="cash-preset-chip" data-amount="50000">
+            50.000
+          </button>
+          <button type="button" class="cash-preset-chip" data-amount="100000">
+            100.000
+          </button>
+          <button type="button" class="cash-preset-chip" data-amount="200000">
+            200.000
+          </button>
+        </div>
+      </div>
+
+      <div class="sheet-input-field">
+        <label for="uang-bayar">
+          <span>Uang Diterima</span>
+          <div class="currency-input-wrap">
+            <span class="currency-prefix">Rp</span>
+            <input
+              id="uang-bayar"
+              inputmode="numeric"
+              type="number"
+              min="0"
+              required
+              placeholder="0"
+              autocomplete="off"
+            >
+          </div>
+        </label>
+      </div>
+
+      <div id="change-preview" class="change-preview-box">
+        <span class="preview-placeholder">Masukkan nominal pembayaran.</span>
+      </div>
+    </div>
+
+    <!-- VIEW 2: QRIS -->
+    <div id="method-view-qris" class="payment-method-view hidden">
+      <div class="qris-card-box">
+        <div class="qris-qr-mock">
+          {{ icons.icon('qrcode') }}
+          <span class="qris-brand-text">QRIS NASIONAL</span>
+        </div>
+        <p class="qris-instruction">
+          Pindai kode QR melalui aplikasi perbankan atau dompet digital pelanggan.
+        </p>
+        <div class="qris-status-pill">
+          {{ icons.icon('checkmark') }} Otomatis lunas
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: TRANSFER / KARTU -->
+    <div id="method-view-transfer" class="payment-method-view hidden">
+      <div class="transfer-card-box">
+        <div class="transfer-icon-row">
+          {{ icons.icon('wallet') }}
+          <div>
+            <strong>Kartu Debit / EDC</strong>
+            <p>Gesek kartu pada mesin kasir</p>
+          </div>
+        </div>
+        <div class="sheet-input-field" style="margin-top: 12px;">
+          <label>
+            <span>Nomor Referensi (Opsional)</span>
+            <input type="text" id="ref-edc" placeholder="Nomor struk EDC" autocomplete="off">
+          </label>
+        </div>
+        <div class="qris-status-pill">
+          {{ icons.icon('checkmark') }} Otomatis lunas
+        </div>
+      </div>
+    </div>
+
+    <!-- Tombol Aksi Modal -->
+    <div class="sheet-actions-bar">
+      <button
+        type="button"
+        class="button apple-pill-btn apple-btn-cancel"
+        onclick="document.getElementById('payment-dialog').close()"
+      >
+        Batal
+      </button>
+      <button
+        id="complete-payment"
+        type="submit"
+        class="button primary apple-pill-btn apple-btn-pay"
+        value="default"
+      >
+        <span class="btn-pay-text">Bayar Sekarang</span>
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ========================================================================= -->
+<!-- APPLE SUCCESS SHEET                                                       -->
+<!-- ========================================================================= -->
+<dialog id="success-dialog" class="apple-modal-dialog">
+  <div class="apple-sheet-box text-center success-sheet-anim">
+    <div class="apple-success-badge">
+      <svg class="apple-check-svg" viewBox="0 0 52 52">
+        <circle class="apple-check-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="apple-check-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+    </div>
+
+    <h2 class="sheet-title" style="margin-top: 4px;">Pembayaran Berhasil</h2>
+    <p id="success-change" class="success-change-text"></p>
+
+    <div class="success-sheet-actions">
+      <button id="new-transaction" type="button" class="button apple-pill-btn">
+        Transaksi Baru
+      </button>
+      <a id="print-receipt" class="button primary apple-pill-btn apple-btn-print">
+        Cetak Struk &gt;
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<!-- Konfigurasi POS untuk JavaScript -->
+<script id="pos-config" type="application/json">
+{{ {
+  'cart': cart,
+  'total': total,
+  'urls': {
+    'update': url_for('api_ubah_jumlah_keranjang'),
+    'checkout': url_for('api_selesai_transaksi')
+  }
+}|tojson }}
+</script>
+{% endblock %}

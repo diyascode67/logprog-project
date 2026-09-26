@@ -1,0 +1,61 @@
+{% import 'icons.html' as icons %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk | Smart Retail</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body class="login-page">
+  <main class="login-layout">
+    <section class="login-panel">
+      <header class="login-header">
+        <span class="login-brand-icon">{{ icons.icon('store') }}</span>
+        <p class="login-brand-name">Smart-Retail</p>
+      </header>
+
+      <div class="login-form-wrap">
+        <h1>Selamat datang kembali</h1>
+        <p>Masuk untuk melanjutkan ke sistem kasir dan kelola toko Anda dengan mudah.</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for kategori, pesan in messages %}
+              <div class="flash {{ kategori }}">{{ pesan }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="post">
+          <div class="login-field">
+            <label for="username">Email atau username</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7 7.5 5.5L19.5 7"/></svg>
+              </span>
+              <input id="username" name="username" placeholder="nama@tokomaju.co.id" required autocomplete="username">
+            </div>
+          </div>
+          <div class="login-field">
+            <div class="login-label-row">
+              <label for="password">Kata sandi</label>
+              <a href="#" class="forgot-password">Lupa kata sandi?</a>
+            </div>
+            <div class="login-input-wrap">
+              <span class="login-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5.5" y="10" width="13" height="10" rx="2"/><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10M12 14v2"/></svg>
+              </span>
+              <input id="password" name="password" type="password" placeholder="Masukkan kata sandi" required autocomplete="current-password">
+              <button class="login-password-toggle" type="button" data-password-toggle="password" aria-label="Tampilkan kata sandi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.75 12s3.25-5.5 9.25-5.5S21.25 12 21.25 12 18 17.5 12 17.5 2.75 12 2.75 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="button primary full login-submit" type="submit">Masuk</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

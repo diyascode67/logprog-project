@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+
+{% block title %}Struk #{{ transaksi.id }} | Smart Retail{% endblock %}
+{% block heading %}Struk Transaksi #{{ transaksi.id }}{% endblock %}
+{% block subtitle %}{{ transaksi.tanggal|tanggal_indonesia('%d %B %Y, %H:%M') }} · Kasir: {{ transaksi.username }}{% endblock %}
+
+{% block topbar_actions %}
+  <a class="button" href="{{ url_for('pos') }}">{{ icons.icon('cart') }} Kasir</a>
+  {% if user.role == 'Admin' %}
+    <a class="button" href="{{ url_for('transaksi') }}">{{ icons.icon('history') }} Riwayat</a>
+  {% endif %}
+  <button class="button primary" onclick="window.print()">{{ icons.icon('receipt') }} Cetak Struk</button>
+{% endblock %}
+
+{% block content %}
+<section class="receipt panel">
+  <header>
+    <span class="brand-icon">{{ icons.icon('store') }}</span>
+    <h2>Smart Retail</h2>
+    <p>Struk Pembelian Toko</p>
+    <div class="receipt-meta">
+      <span>No: #{{ transaksi.id }}</span>
+      <span>Tanggal: {{ transaksi.tanggal|tanggal_indonesia }}</span>
+      <span>Kasir: {{ transaksi.username }}</span>
+    </div>
+  </header>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>PRODUK</th>
+          <th style="text-align: center;">JUMLAH</th>
+          <th style="text-align: right;">SUBTOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in detail %}
+          <tr>
+            <td><strong>{{ item.nama_produk }}</strong></td>
+            <td style="text-align: center;">{{ item.jumlah }}</td>
+            <td class="price" style="text-align: right;">{{ item.subtotal|rupiah }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="receipt-total">
+    <p>Total Belanja <strong>{{ transaksi.total_bayar|rupiah }}</strong></p>
+    <p>Uang Diterima <strong>{{ transaksi.uang_bayar|rupiah }}</strong></p>
+    <p class="highlight-change">Kembalian <strong>{{ transaksi.kembalian|rupiah }}</strong></p>
+  </div>
+
+  <div class="receipt-actions">
+    <button class="button primary full" onclick="window.print()">
+      {{ icons.icon('receipt') }} Cetak Struk / Simpan PDF
+    </button>
+  </div>
+</section>
+{% endblock %}

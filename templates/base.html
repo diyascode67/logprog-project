@@ -1,0 +1,126 @@
+{% import 'icons.html' as icons %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}Smart Retail{% endblock %}</title>
+  <link rel="preload" href="{{ url_for('static', filename='style.css') }}?v=1.5" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.5">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="custom-cursor" aria-hidden="true">
+    <svg class="custom-cursor__glyph" viewBox="0 0 24 24" focusable="false">
+      <path d="M2.5 1.5v18.2l4.8-4.2 3.1 7.2 2.8-1.2-3.1-7.2 5.9-.1L2.5 1.5z" fill="#141416" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <svg class="custom-cursor__text" viewBox="0 0 24 24" focusable="false">
+      <path d="M7 3.5h10v2h-4v13h4v2H7v-2h4v-13H7v-2z" fill="#141416" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <script>
+    /* Restore cursor position immediately before paint to prevent any default cursor flicker */
+    (function(){
+      try {
+        var p = sessionStorage.getItem('sr_cpos');
+        if (p) {
+          var parts = p.split(',');
+          var cur = document.querySelector('.custom-cursor');
+          if (cur && parts.length === 2) {
+            cur.style.transform = 'translate3d(' + (parts[0] - 2.5) + 'px,' + (parts[1] - 1.5) + 'px,0)';
+            document.body.classList.add('custom-cursor-enabled');
+          }
+        }
+      } catch(e){}
+    })();
+  </script>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="{{ url_for('dashboard') }}">
+        <span class="brand-icon">{{ icons.icon('store') }}</span>
+        <span>Smart <span>Retail</span></span>
+      </a>
+
+      <p class="menu-label">Menu</p>
+      <nav aria-label="Navigasi Utama">
+        <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+          <b>{{ icons.icon('home') }}</b> Dasbor
+        </a>
+        <a class="nav-link {% if request.endpoint == 'pos' %}active{% endif %}" href="{{ url_for('pos') }}">
+          <b>{{ icons.icon('cart') }}</b> Kasir
+        </a>
+        <a class="nav-link {% if request.endpoint == 'produk' %}active{% endif %}" href="{{ url_for('produk') }}">
+          <b>{{ icons.icon('box') }}</b> Produk
+        </a>
+
+        {% if user.role == 'Admin' %}
+          <p class="menu-label">Admin</p>
+          <a class="nav-link {% if request.endpoint in ['transaksi', 'detail_transaksi'] %}active{% endif %}" href="{{ url_for('transaksi') }}">
+            <b>{{ icons.icon('history') }}</b> Riwayat
+          </a>
+          <a class="nav-link {% if request.endpoint == 'laporan' %}active{% endif %}" href="{{ url_for('laporan') }}">
+            <b>{{ icons.icon('chart') }}</b> Laporan
+          </a>
+        {% endif %}
+      </nav>
+
+      <div class="profile-card">
+        <span class="avatar">{{ user.nama[:1]|upper }}</span>
+        <div class="profile-info">
+          <strong>{{ user.nama }}</strong>
+          <small>{{ user.role }}</small>
+        </div>
+        <form action="{{ url_for('logout') }}" method="post">
+          <button class="icon-button" title="Keluar" aria-label="Keluar">
+            {{ icons.icon('logout') }}
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <button class="mobile-menu" aria-label="Buka navigasi" onclick="document.getElementById('sidebar').classList.toggle('open')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="20" height="20" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <div class="topbar-title-group">
+          <h1>{% block heading %}Dasbor{% endblock %}</h1>
+          <p>{% block subtitle %}{% endblock %}</p>
+        </div>
+
+        <div class="topbar-actions">
+          {% block topbar_actions %}
+            <span class="online"><i></i> Online</span>
+            <a class="button primary" href="{{ url_for('pos') }}">
+              {{ icons.icon('plus') }} Transaksi Baru
+            </a>
+          {% endblock %}
+        </div>
+      </header>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <section class="flash-area">
+            {% for kategori, pesan in messages %}
+              <div class="flash {{ kategori }}">{{ pesan }}</div>
+            {% endfor %}
+          </section>
+        {% endif %}
+      {% endwith %}
+
+      <div class="main-body">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='pos.js') }}?v=1.5" defer></script>
+  <script src="{{ url_for('static', filename='app.js') }}?v=1.5" defer></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

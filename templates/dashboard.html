@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+{% block title %}Dasbor | Smart Retail{% endblock %}
+{% block heading %}Ringkasan Sistem{% endblock %}
+{% block subtitle %}Pantau kinerja toko secara real-time{% endblock %}
+{% block content %}
+<section class="metric-grid">
+  <article class="metric-card"><span class="metric-icon blue">{{ icons.icon('wallet') }}</span><p>Total Pendapatan Hari Ini</p><strong>{{ pendapatan|rupiah }}</strong></article>
+  <article class="metric-card"><span class="metric-icon purple">{{ icons.icon('receipt') }}</span><p>Total Transaksi Hari Ini</p><strong>{{ jumlah_transaksi }} <small>transaksi</small></strong></article>
+  <article class="metric-card"><span class="metric-icon orange">{{ icons.icon('box') }}</span><p>Total Produk Aktif</p><strong>{{ jumlah_produk }} <small>produk</small></strong></article>
+  <article class="metric-card danger"><span class="metric-icon red">{{ icons.icon('alert') }}</span><p>Stok Hampir Habis (&lt;10)</p><strong>{{ stok_menipis }} <small>produk</small></strong></article>
+</section>
+
+{% if not jumlah_produk %}
+<section class="panel onboarding-panel">
+  <span class="onboarding-icon">{{ icons.icon('box') }}</span>
+  <div class="onboarding-body">
+    <h2>Mulai isi inventaris</h2>
+    <p>Belum ada produk di database. Tambahkan produk agar kasir dapat membuat transaksi dan grafik penjualan mulai terisi.</p>
+  </div>
+  {% if user.role == 'Admin' %}
+  <a class="button primary" href="{{ url_for('produk') }}#tambah-produk">{{ icons.icon('plus') }} Tambah Produk</a>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="dashboard-grid">
+  <article class="panel chart-panel">
+    <div class="panel-title"><div><h2>Penjualan 7 Hari Terakhir</h2><span>Berubah otomatis setelah transaksi diselesaikan</span></div><span class="badge success-badge">Data aktual</span></div>
+    {% if grafik_penjualan.ada_penjualan %}
+    <div class="line-chart">
+      <svg viewBox="0 0 600 240" role="img" aria-label="Grafik total penjualan tujuh hari terakhir">
+        <defs><linearGradient id="sales-area" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2e6df6" stop-opacity=".38"/><stop offset="100%" stop-color="#2e6df6" stop-opacity="0"/></linearGradient></defs>
+        <path class="grid-line" d="M20 55H580 M20 105H580 M20 155H580 M20 205H580"/>
+        <path class="line-area" d="{{ grafik_penjualan.area }}"/>
+        <path class="line-main" d="{{ grafik_penjualan.garis }}"/>
+        {% for hari in grafik_penjualan.label %}<text class="chart-label" x="{{ hari.x }}" y="227" text-anchor="middle">{{ hari.teks }}</text>{% endfor %}
+      </svg>
+    </div>
+    <div class="chart-summary"><span>Total 7 hari <strong>{{ grafik_penjualan.total|rupiah }}</strong></span><span>Tertinggi harian <strong>{{ grafik_penjualan.maksimum|rupiah }}</strong></span></div>
+    {% else %}
+    <div class="chart-empty"><span>⌁</span><h3>Grafik siap digunakan</h3><p>Belum ada transaksi penjualan dalam 7 hari terakhir. Selesaikan transaksi dari menu Kasir untuk melihat grafik aktual.</p><a class="button primary small" href="{{ url_for('pos') }}">Buka Kasir</a></div>
+    {% endif %}
+  </article>
+  <article class="panel low-stock"><div class="panel-title"><h2>Prioritas Restok</h2><span class="badge danger-badge">Penting</span></div>{% for produk in produk_menipis %}<div class="stock-row"><span>{{ produk.nama_produk }}</span><b>{{ produk.stok }} tersisa</b></div>{% else %}<p class="empty">Tidak ada stok yang perlu direstok.</p>{% endfor %}</article>
+</section>
+
+<section class="panel table-panel"><div class="panel-title"><h2>Transaksi Terbaru</h2>{% if user.role == 'Admin' %}<a href="{{ url_for('transaksi') }}">Lihat semua →</a>{% endif %}</div><div class="table-scroll"><table><thead><tr><th>ID</th><th>TANGGAL</th><th>KASIR</th><th>TOTAL</th></tr></thead><tbody>{% for item in transaksi_terbaru %}<tr><td>#{{ item.id }}</td><td>{{ item.tanggal|tanggal_indonesia }}</td><td>{{ item.username }}</td><td class="price">{{ item.total_bayar|rupiah }}</td></tr>{% else %}<tr><td colspan="4" class="empty">Belum ada transaksi.</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

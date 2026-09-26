@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% import 'icons.html' as icons %}
+
+{% block title %}Kelola Produk | Smart Retail{% endblock %}
+{% block heading %}Manajemen Produk{% endblock %}
+{% block subtitle %}Kelola inventaris, kategori, harga modal, harga jual, dan stok toko{% endblock %}
+
+{% block topbar_actions %}
+  <span class="online"><i></i> SISTEM ONLINE</span>
+  <a class="button" href="{{ url_for('pos') }}">{{ icons.icon('cart') }} Kasir</a>
+  {% if user.role == 'Admin' %}
+    <a class="button primary" href="#tambah-produk">{{ icons.icon('plus') }} Tambah Produk</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="toolbar">
+  <form class="search" method="get" action="{{ url_for('produk') }}">
+    <span class="search-input-icon">{{ icons.icon('search') }}</span>
+    <input
+      name="q"
+      value="{{ q }}"
+      placeholder="Cari nama barang atau ID produk..."
+      aria-label="Cari produk"
+      autocomplete="off"
+    >
+    <button type="submit">Cari</button>
+    {% if q %}
+      <a class="search-reset-btn" href="{{ url_for('produk') }}" title="Hapus pencarian">
+        {{ icons.icon('close') }}
+      </a>
+    {% endif %}
+  </form>
+
+  {% if user.role == 'Admin' %}
+    <a class="button primary" href="#tambah-produk">
+      {{ icons.icon('plus') }} Tambah Produk Baru
+    </a>
+  {% endif %}
+</section>
+
+<section class="mini-metrics">
+  <article>
+    <span>{{ icons.icon('box') }}</span>
+    <div>
+      <p>Total Produk Terdaftar</p>
+      <strong>{{ jumlah_produk }} <small>produk</small></strong>
+    </div>
+  </article>
+  <article class="warning">
+    <span>{{ icons.icon('alert') }}</span>
+    <div>
+      <p>Stok Menipis (&lt;10)</p>
+      <strong>{{ stok_menipis }} <small>perlu restok</small></strong>
+    </div>
+  </article>
+</section>
+
+{% if user.role == 'Admin' %}
+<section id="tambah-produk" class="panel add-product">
+  <div class="panel-title">
+    <h2>{{ icons.icon('plus') }} Tambah Produk Baru</h2>
+    <span>Isi informasi barang di bawah</span>
+  </div>
+  <form method="post" class="form-grid">
+    <label>
+      Nama Produk
+      <input name="nama_produk" placeholder="Contoh: Beras Premium 5kg" required autocomplete="off">
+    </label>
+    <label>
+      Kategori
+      <input name="kategori" placeholder="Contoh: Sembako" autocomplete="off">
+    </label>
+    <label>
+      Harga Modal (Rp)
+      <input name="harga_modal" type="number" min="0" placeholder="0" required>
+    </label>
+    <label>
+      Harga Jual (Rp)
+      <input name="harga_jual" type="number" min="0" placeholder="0" required>
+    </label>
+    <label>
+      Stok Awal
+      <input name="stok" type="number" min="0" placeholder="0" required>
+    </label>
+    <button class="button primary full-height" type="submit">Simpan Produk</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="panel table-panel">
+  <div class="panel-title">
+    <div>
+      <h2>Daftar Inventaris Produk</h2>
+      <span>{{ total_hasil }} produk {% if q %}(hasil filter: "{{ q }}"){% endif %}</span>
+    </div>
+    {% if q %}
+      <a class="button small" href="{{ url_for('produk') }}">Tampilkan Semua Produk</a>
+    {% endif %}
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NAMA BARANG</th>
+          <th>KATEGORI</th>
+          <th>HARGA MODAL</th>
+          <th>HARGA JUAL</th>
+          <th>STOK</th>
+          <th>STATUS</th>
+          {% if user.role == 'Admin' %}<th>AKSI</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in produk %}
+          <tr>
+            <td><span class="id-tag">#{{ item.id }}</span></td>
+            <td><strong>{{ item.nama_produk }}</strong></td>
+            <td><span class="category-pill">{{ item.kategori }}</span></td>
+            <td>{{ item.harga_modal|rupiah }}</td>
+            <td class="price">{{ item.harga_jual|rupiah }}</td>
+            <td class="{{ 'stock-low' if item.stok < 10 else '' }}">
+              <strong>{{ item.stok }}</strong> unit
+            </td>
+            <td>
+              {% if item.stok == 0 %}
+                <span class="badge danger-badge">Habis</span>
+              {% elif item.stok < 10 %}
+                <span class="badge warning-badge">Menipis</span>
+              {% else %}
+                <span class="badge success-badge">Tersedia</span>
+              {% endif %}
+            </td>
+            {% if user.role == 'Admin' %}
+              <td>
+                <details class="actions">
+                  <summary class="button small">{{ icons.icon('edit') }} Ubah</summary>
+                  <div class="edit-popover">
+                    <p class="edit-popover-title">Edit Produk #{{ item.id }}</p>
+                    <form action="{{ url_for('ubah_produk', id_produk=item.id) }}" method="post" class="edit-form">
+                      <label>
+                        Nama Produk
+                        <input name="nama_produk" value="{{ item.nama_produk }}" required aria-label="Nama produk">
+                      </label>
+                      <label>
+                        Kategori
+                        <input name="kategori" value="{{ item.kategori }}" aria-label="Kategori">
+                      </label>
+                      <label>
+                        Harga Jual (Rp)
+                        <input name="harga_jual" type="number" value="{{ item.harga_jual }}" min="0" required aria-label="Harga jual">
+                      </label>
+                      <label>
+                        Stok
+                        <input name="stok" type="number" value="{{ item.stok }}" min="0" required aria-label="Stok">
+                      </label>
+                      <div class="edit-popover-actions">
+                        <button class="button primary small" type="submit">Simpan Perubahan</button>
+                      </div>
+                    </form>
+                    <hr class="popover-divider">
+                    <form action="{{ url_for('hapus_produk', id_produk=item.id) }}" method="post" onsubmit="return confirm('Hapus produk {{ item.nama_produk }}?')">
+                      <button class="button danger small full" type="submit">{{ icons.icon('trash') }} Hapus Produk</button>
+                    </form>
+                  </div>
+                </details>
+              </td>
+            {% endif %}
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="8" class="empty">
+              <div class="empty-state-icon">{{ icons.icon('box') }}</div>
+              {% if q %}
+                <p>Tidak ada produk yang cocok dengan pencarian "<strong>{{ q }}</strong>".</p>
+                <a class="button small" href="{{ url_for('produk') }}">Reset Pencarian</a>
+              {% else %}
+                <p>Belum ada produk yang terdaftar.</p>
+                {% if user.role == 'Admin' %}
+                  <a class="button primary small" href="#tambah-produk">Tambah Produk Pertama</a>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% if total_halaman > 1 %}
+  <nav class="product-pagination" aria-label="Halaman inventaris">
+    {% if halaman > 1 %}
+      <a class="pagination-control" href="{{ url_for('produk', q=q, page=halaman - 1) }}" aria-label="Halaman sebelumnya">‹</a>
+    {% else %}
+      <span class="pagination-control is-disabled" aria-hidden="true">‹</span>
+    {% endif %}
+
+    <div class="pagination-pages">
+      {% for nomor in nomor_halaman %}
+        {% if nomor is none %}
+          <span class="pagination-ellipsis">…</span>
+        {% elif nomor == halaman %}
+          <span class="pagination-page is-current" aria-current="page">{{ nomor }}</span>
+        {% else %}
+          <a class="pagination-page" href="{{ url_for('produk', q=q, page=nomor) }}">{{ nomor }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if halaman < total_halaman %}
+      <a class="pagination-control" href="{{ url_for('produk', q=q, page=halaman + 1) }}" aria-label="Halaman berikutnya">›</a>
+    {% else %}
+      <span class="pagination-control is-disabled" aria-hidden="true">›</span>
+    {% endif %}
+  </nav>
+{% endif %}
+{% endblock %}
